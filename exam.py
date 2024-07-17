@@ -85,20 +85,20 @@ pass
 
 # ### Exercise 5 (max 3 points)
 #
-# Print all the unique names of the `sampling_sites` together with the number of samples collected in that site.
+# Print all the unique names of the `sampling_place` together with the number of samples collected in that site.
 
 pass
 
 # ### Exercise 6 (max 3 points)
 #
-# Plot together the histograms of `age_days` for each combination of sex and environment. The four histograms should appear within the same axes.
+# Plot together the histograms of `age_years` for each combination of sex and environment. The four histograms should appear within the same axes.
 
 pass
 
 
 # ### Exercise 7 (max 4 points)
 #
-# Make a figure with 3 rows with the scatter plots of `age_days` vs. the three methylation levels (`SLC12A5`,`VGF`,`SCGN`).
+# Make a figure with 3 rows with the scatter plots of `age_years` vs. the three methylation levels (`SLC12A5`,`VGF`,`SCGN`).
 
 # +
 pass
@@ -114,7 +114,7 @@ pass
 # - a parameter $\alpha$ is normally distributed with $\mu = 0$ and $\sigma = 1$ 
 # - a parameter $\beta$ is normally distributed with $\mu = 1$ and $\sigma = 1$ 
 # - a parameter $\gamma$ is exponentially distributed with $\lambda = 1$
-# - the observed `age_days` is normally distributed with standard deviation $\gamma$ and a mean given by $\alpha + \beta \cdot M$ (where $M$ is the correspondig value of `SCGN`).
+# - the observed `age_years` is normally distributed with standard deviation $\gamma$ and a mean given by $\alpha + \beta \cdot M$ (where $M$ is the correspondig value of `SCGN`).
 #
 # Code this model with pymc, sample the model, and plot the summary of the resulting estimation by using `az.plot_posterior`. 
 #
