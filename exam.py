@@ -49,14 +49,18 @@ import arviz as az              # type: ignore
 #
 # Load the data in a Pandas dataframe. Be sure the columns with dates have the correct dtype (`datetime64[ns]`) and the dates are parsed correctly (the birth date is always on February 1).
 
-pass
+data = pd.read_csv('brown_bear_blood.csv', parse_dates=['birth','sampling_date'])
+data.head()
+
+data.dtypes
 
 # ### Exercise 2 (max 4 points)
 #
 # Add a column `sampling_place` with the last word of `Sample_ID`.
 #
 
-pass
+data['sampling_place'] = data['Sample_ID'].str.split().apply(lambda r: r[-1])
+
 
 # ### Exercise 3 (max 7 points)
 #
@@ -67,33 +71,56 @@ pass
 #
 # To get the full marks, you should declare correctly the type hints and add a test within a doctest string.
 
-pass
+def oddity(s: pd.Series) -> pd.Series:
+    """Return a new Series in which every element of s is multiplied according to its integer index: 
+       if the index is even the original value is multiplied by 100, 
+       if the index is odd the original value is multiplied by 1000.
+
+       >>> all(np.isclose(oddity(pd.Series([10., 9.5, 8.])), pd.Series([1000, 9500, 800])))
+       True
+    """
+    result = []
+    for i, v in enumerate(s):
+        if i % 2 == 0:
+            result.append(v*100)
+        else:
+            result.append(v*1000)
+    return pd.Series(result)
 
 
 # +
 # You can test your docstrings by uncommenting the following two lines
 
-# import doctest
-# doctest.testmod()
+import doctest
+doctest.testmod()
 # -
 
 # ### Exercise 4 (max 5 points)
 #
 # Apply the function defined in Exercise 3 on the two series of `age_years` of male and female bears, each ordered by increasing `age_years`. Avoid the use of loops for full marks.
 
-pass
+data.sort_values('age_years').groupby('sex')['age_years'].apply(oddity)
 
 # ### Exercise 5 (max 3 points)
 #
 # Print all the unique names of the `sampling_place` together with the number of samples collected in that site.
 
-pass
+data['sampling_place'].value_counts()
 
 # ### Exercise 6 (max 3 points)
 #
 # Plot together the histograms of `age_years` for each combination of sex and environment. The four histograms should appear within the same axes.
 
-pass
+# +
+fig, ax = plt.subplots()
+
+
+for s in data['sex'].unique():
+    for e in data['environment'].unique():
+        d = data[(data['sex'] == s) & (data['environment'] == e)]
+        ax.hist(d['age_years'], bins='auto', density=True, label=f'{s} {e}')
+_ = ax.legend()
+# -
 
 
 # ### Exercise 7 (max 4 points)
@@ -101,7 +128,14 @@ pass
 # Make a figure with 3 rows with the scatter plots of `age_years` vs. the three methylation levels (`SLC12A5`,`VGF`,`SCGN`).
 
 # +
-pass
+fig, ax = plt.subplots(nrows=3)
+mlevels = ['SLC12A5', 'VGF', 'SCGN']
+
+for i, m in enumerate(mlevels):
+    ax[i].scatter(data['age_years'], data[m])
+    ax[i].set_title(m)
+
+fig.tight_layout()
 
 
 
@@ -121,4 +155,14 @@ pass
 #
 #
 
-pass
+with pm.Model() as model:
+    a = pm.Normal('alpha', mu=0, sigma=1)
+    b = pm.Normal('beta', mu=1, sigma=1)
+    c = pm.Exponential('gamma', 1)
+
+    pm.Normal('years', sigma=c, mu=a + b*data['SCGN'], observed=data['age_years'])
+    idata = pm.sample()
+
+_ = az.plot_posterior(idata)
+
+
