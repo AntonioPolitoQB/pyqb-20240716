@@ -79,12 +79,12 @@ def oddity(s: pd.Series) -> pd.Series:
        >>> all(np.isclose(oddity(pd.Series([10., 9.5, 8.])), pd.Series([1000, 9500, 800])))
        True
     """
-    result = []
+    result = np.empty(len(s))
     for i, v in enumerate(s):
         if i % 2 == 0:
-            result.append(v*100)
+            result[i] = v*100
         else:
-            result.append(v*1000)
+            result[i] = v*1000
     return pd.Series(result)
 
 
@@ -99,7 +99,7 @@ doctest.testmod()
 #
 # Apply the function defined in Exercise 3 on the two series of `age_years` of male and female bears, each ordered by increasing `age_years`. Avoid the use of loops for full marks.
 
-data.sort_values('age_years').groupby('sex')['age_years'].apply(oddity)
+data.sort_values(by=['age_years']).groupby('sex')['age_years'].apply(oddity)
 
 # ### Exercise 5 (max 3 points)
 #
@@ -118,7 +118,7 @@ fig, ax = plt.subplots()
 for s in data['sex'].unique():
     for e in data['environment'].unique():
         d = data[(data['sex'] == s) & (data['environment'] == e)]
-        ax.hist(d['age_years'], bins='auto', density=True, label=f'{s} {e}')
+        ax.hist(d['age_years'], bins='auto', density=True, label=f'{s} {e}', alpha=.7)
 _ = ax.legend()
 # -
 
